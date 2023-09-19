@@ -8,13 +8,13 @@
 
 /**
 * @brief печатает массив на экран
-* @param **arr исходный массив
+* @param **arr исходный массив, n и m - количество строк и столбцов соответственно
 */
 void printArr(int **arr, int n, int m);
 
 /**
 * @brief считывает строку и проверяет, что в ней только числа
-* @param *arr строка матрицы (одномерный массив)
+* @param *arr строка матрицы (одномерный массив), size размер массива, index - индекс, после которого нужно вставить, elem - элемент, который нужно вставить
 * @return изменённый массив
 */
 int *insert(int *arr, int size, int index, int elem);
@@ -53,14 +53,20 @@ int main() {
 	srand(time(NULL));
 	int n = 0, m = 0, filling = 0;
 	puts("Enter shape of array (n and m): ");
-	scanf("%d %d", &n, &m);
+	if (scanf("%d %d", &n, &m) != 2) {
+		puts("Invalid number of arguments!");
+		abort();
+	}
 	int **arr = (int**)calloc(n, sizeof(int*));
 	int a = 0;
 	for (a = 0; a < n; ++a) {
 		arr[a] = (int*)calloc(m, sizeof(int));
 	} 
 	puts("\nDo you want to enter the array or fill it random digits? (0 - for enter, 1 - for random): ");
-	scanf("%d", &filling);
+	if (scanf("%d", &filling) != 1) {
+		puts("Invalid number of arguments!");
+		abort();
+	}
 	int i = 0;
 	int j = 0;
 	int max = INT_MIN;
