@@ -19,12 +19,90 @@ void printArr(int **arr, int n, int m);
 */
 int *insert(int *arr, int size, int index, int elem);
 
+/**
+* @brief заполняет массив целыми числами
+* @param ***arr двумерный массив, n и m - размеры массива
+*/
+void randomInput(int ***arr, int n, int m);
+
+/**
+* @brief заполняет массив пользовательским вводом
+* @param ***arr двумерный массив, n и m - размеры массива
+*/
+void userInput(int ***arr, int n, int m);
+
+/**
+* @brief ищет максимальный элемент массива
+* @param ***arr массив, n и m размер массива
+* @return максимальный элемент
+*/
+int findMax(int ***arr, int n, int m);
+
+/**
+* @brief ищет максимальный элемент массива
+* @param ***arr массив, n и m размер массива, max - максимальный элемент массива
+* @return массив bool, где на каждом индексе j стоит или не стоит флаг, есть ли в столбце максимальный элемент
+*/
+bool *findMaxColumns(int ***arr, int n, int m, int max);
+
+/**
+* @brief заменяет 0-е элементы столбца максимальным элементом в массиве
+* @param ***arr массив, m количество столбцов в массиве, max - максимальный элемент массива
+*/
+void replaceMax(int ***arr, int m, int max);
+
+/**
+* @brief вставляет нули после столбца, содержащего максимальный элемент в массиве
+* @param ***arr массив, n и m размер массива, maxIndexes - массив bool, где на каждом индексе j стоит или не стоит флаг, есть ли в столбце максимальный элемент
+* @return изменённый массив
+*/
+int insertZeroColumns(int ***arr, int n, int m, bool *maxIndexes);
+
+int main() {
+	int i = 0;
+	int j = 0;
+	int n = 0, m = 0, filling = 0;
+	puts("Enter shape of array (n and m): ");
+	if (scanf("%d %d", &n, &m) != 2) {
+		puts("Invalid number of arguments!");
+		abort();
+	}
+	int **arr = (int**)calloc(n, sizeof(int*));
+	int a = 0;
+	for (a = 0; a < n; ++a) {
+		arr[a] = (int*)calloc(m, sizeof(int));
+	}
+	puts("\nDo you want to enter the array or fill it random digits? (0 - for enter, 1 - for random): ");
+	if (scanf("%d", &filling) != 1) {
+		puts("Invalid number of arguments!");
+		abort();
+	}
+	if (filling) {
+		randomInput(&arr, n, m);
+	} else {
+		userInput(&arr, n, m);
+	}
+	int max = findMax(&arr, n, m);
+	bool *maxIndexes = findMaxColumns(&arr, n, m, max);
+	puts("3");
+	puts("Entered array:\n");
+	printArr(arr, n, m);
+
+	// Заменяем нулевой элемент максимальным по модулю элементом массива
+	replaceMax(&arr, m, max);
+	int offset = insertZeroColumns(&arr, n, m, maxIndexes);
+
+	// Заменяем нулевой элемент иаксимальным по модулю элементом массива
+	puts("Output array:\n");
+	printArr(arr, n, m + offset);
+	return 0;
+}
+
 int *insert(int *arr, int size, int index, int elem) {
 	int *tmp = (int*)calloc(size + 1, sizeof(int));
 	memset(tmp, 0, size + 1);
 	int i = 0;
 	int offset = 0;
-	//puts("1.1\n");
 	for (i = 0; i < size; ++i) {
 		if (i == index) {
 			tmp[i + offset] = elem;
@@ -35,7 +113,6 @@ int *insert(int *arr, int size, int index, int elem) {
 	free(arr);
 	arr = tmp;
 	return tmp;
-	//puts("1.2");
 }
 
 void printArr(int **arr, int n, int m) {
@@ -49,82 +126,79 @@ void printArr(int **arr, int n, int m) {
 	}
 }
 
-int main() {
+
+void randomInput(int ***arr, int n, int m) {
 	srand(time(NULL));
-	int n = 0, m = 0, filling = 0;
-	puts("Enter shape of array (n and m): ");
-	if (scanf("%d %d", &n, &m) != 2) {
-		puts("Invalid number of arguments!");
-		abort();
-	}
-	int **arr = (int**)calloc(n, sizeof(int*));
-	int a = 0;
-	for (a = 0; a < n; ++a) {
-		arr[a] = (int*)calloc(m, sizeof(int));
-	} 
-	puts("\nDo you want to enter the array or fill it random digits? (0 - for enter, 1 - for random): ");
-	if (scanf("%d", &filling) != 1) {
-		puts("Invalid number of arguments!");
-		abort();
-	}
-	int i = 0;
-	int j = 0;
-	int max = INT_MIN;
-	if (!filling) {
-		puts("Enter array elements:\n");
-        }
+	int i = 0, j = 0;
 	for (i = 0; i < n; ++i) {
 		for (j = 0; j < m; ++j) {
-			if (filling) {
-				arr[i][j] = rand() % 1000;
-			} else {
-				scanf("%d", &arr[i][j]);
-			}
-			if (abs(arr[i][j]) > max) {
-				max = arr[i][j];
-			}
-		}
-		if (!filling) {
-			puts("\n");
+			(*arr)[i][j] = rand() % 1000;
 		}
 	}
-	puts("Entered array:\n");
-	printArr(arr, n, m);
-	bool maxIndexes[m];
-	int maxCount = 0;
-	memset(&maxIndexes, 0, m);
+}
+
+void userInput(int ***arr, int n, int m) {
+	puts("Enter array elements:\n");
+	int i = 0, j = 0;
+	for (i = 0; i < n; ++i) {
+		for (j = 0; j < m; ++j) {
+				if (scanf("%d", &((*arr)[i][j])) != 1) {
+					puts("Invalid number of arguments!");
+					abort();
+				}
+		}
+		puts("\n");
+	}
+}
+
+int findMax(int ***arr, int n, int m) {
+	int max = (*arr)[0][0];
+	int i = 0;
+	int j = 0;
+	for (i = 0; i < n; ++i) {
+		for (j = 0; j < m; ++j) {
+			if (abs((*arr)[i][j]) > max) {
+				max = (*arr)[i][j];
+			}
+		}
+	}
+	return max;
+}
+
+bool *findMaxColumns(int ***arr, int n, int m, int max) {
+	bool *maxIndexes = calloc(m, sizeof(bool));
+	memset(maxIndexes, 0, m);
+	int i = 0, j = 0;
 	for (i = 0; i < n; ++i) {
 		for (j = 0; j < m; ++j)
 		{
-			if (arr[i][j] == max) {
-				if (!maxIndexes[j]) {
-					maxCount++;
-				}
+			if ((*arr)[i][j] == max) {
 				// если хоть одна строка содержит на индексе j максимальное число, значит столбец j содержит максимальное число
 				maxIndexes[j] = 1;
 			}
 		}
 	}
-	// Заменяем нулевой элемент иаксимальным по модулю элементом массива
-        for (j = 0; j < m; ++j) {
-                arr[0][j] = max;
-        }
-	//printf("%d\n", max);
+	return maxIndexes;
+}
+
+void replaceMax(int ***arr, int m, int max) {
+	int j = 0;
+	for (j = 0; j < m; ++j) {
+		(*arr)[0][j] = max;
+	}
+}
+
+int insertZeroColumns(int ***arr, int n, int m, bool *maxIndexes) {
 	int offset = 0;
+	int i = 0, j = 0;
 	for (i = 0; i < n; ++i) {
 		offset = 0;
 		for (j = 0; j < m; ++j) {
 			if (maxIndexes[j]) {
-				//puts("1");
-				arr[i] = insert(arr[i], m + offset, j + offset + 1, 0);
+				(*arr)[i] = insert((*arr)[i], m + offset, j + offset + 1, 0);
 				offset++;
-				//puts("2");
 			}
 		}
 	}
-
-	// Заменяем нулевой элемент иаксимальным по модулю элементом массива
-	puts("Output array:\n");
-	printArr(arr, n, m + offset);
-	return 0;
+	return offset;
 }
