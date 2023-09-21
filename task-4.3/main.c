@@ -58,6 +58,13 @@ void replaceMax(int ***arr, int m, int max);
 */
 int insertZeroColumns(int ***arr, int n, int m, bool *maxIndexes);
 
+/**
+* @brief выделяет память для массива
+* @param n и m размер массива
+* @return созданный массив
+*/
+int **initArray(size_t n, size_t m);
+
 int main() {
 	int i = 0;
 	int j = 0;
@@ -67,11 +74,11 @@ int main() {
 		puts("Invalid number of arguments!");
 		abort();
 	}
-	int **arr = (int**)calloc(n, sizeof(int*));
-	int a = 0;
-	for (a = 0; a < n; ++a) {
-		arr[a] = (int*)calloc(m, sizeof(int));
+	if (m <= 0 || n <= 0) {
+		puts("Invalid shape of array");
+		abort();
 	}
+	int **arr = initArray(n, m);
 	puts("\nDo you want to enter the array or fill it random digits? (0 - for enter, 1 - for random): ");
 	if (scanf("%d", &filling) != 1) {
 		puts("Invalid number of arguments!");
@@ -84,17 +91,16 @@ int main() {
 	}
 	int max = findMax(&arr, n, m);
 	bool *maxIndexes = findMaxColumns(&arr, n, m, max);
-	puts("3");
 	puts("Entered array:\n");
 	printArr(arr, n, m);
 
 	// Заменяем нулевой элемент максимальным по модулю элементом массива
 	replaceMax(&arr, m, max);
-	int offset = insertZeroColumns(&arr, n, m, maxIndexes);
+	int insertedColumns = insertZeroColumns(&arr, n, m, maxIndexes);
 
 	// Заменяем нулевой элемент иаксимальным по модулю элементом массива
 	puts("Output array:\n");
-	printArr(arr, n, m + offset);
+	printArr(arr, n, m + insertedColumns);
 	return 0;
 }
 
@@ -102,13 +108,13 @@ int *insert(int *arr, int size, int index, int elem) {
 	int *tmp = (int*)calloc(size + 1, sizeof(int));
 	memset(tmp, 0, size + 1);
 	int i = 0;
-	int offset = 0;
+	int insertedColumns = 0;
 	for (i = 0; i < size; ++i) {
 		if (i == index) {
-			tmp[i + offset] = elem;
-			++offset;
+			tmp[i + insertedColumns] = elem;
+			++insertedColumns;
 		}
-		tmp[i + offset] = arr[i];
+		tmp[i + insertedColumns] = arr[i];
 	}
 	free(arr);
 	arr = tmp;
@@ -189,16 +195,25 @@ void replaceMax(int ***arr, int m, int max) {
 }
 
 int insertZeroColumns(int ***arr, int n, int m, bool *maxIndexes) {
-	int offset = 0;
+	int insertedColumns = 0;
 	int i = 0, j = 0;
 	for (i = 0; i < n; ++i) {
-		offset = 0;
+		insertedColumns = 0;
 		for (j = 0; j < m; ++j) {
 			if (maxIndexes[j]) {
-				(*arr)[i] = insert((*arr)[i], m + offset, j + offset + 1, 0);
-				offset++;
+				(*arr)[i] = insert((*arr)[i], m + insertedColumns, j + insertedColumns + 1, 0);
+				insertedColumns++;
 			}
 		}
 	}
-	return offset;
+	return insertedColumns;
+}
+
+int **initArray(size_t n, size_t m) {
+	int **arr = (int**)calloc(n, sizeof(int*));
+	int i = 0;
+	for (i = 0; i < n; ++i) {
+		arr[i] = (int*)calloc(m, sizeof(int));
+	}
+	return arr;
 }
