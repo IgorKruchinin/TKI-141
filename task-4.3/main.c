@@ -89,7 +89,7 @@ int main() {
 		userInput(&arr, n, m);
 	}
 	int max = findMax(&arr, n, m);
-	bool *maxIndexes = findMaxColumns(&arr, n, m, max);
+	int *maxIndexes = findMaxColumns(&arr, n, m, max);
 	puts("Entered array:\n");
 	printArr(arr, n, m);
 
