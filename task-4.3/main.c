@@ -43,7 +43,7 @@ int findMax(int ***arr, int n, int m);
 * @param ***arr массив, n и m размер массива, max - максимальный элемент массива
 * @return массив bool, где на каждом индексе j стоит или не стоит флаг, есть ли в столбце максимальный элемент
 */
-bool *findMaxColumns(int ***arr, int n, int m, int max);
+int *findMaxColumns(int ***arr, int n, int m, int max);
 
 /**
 * @brief заменяет 0-е элементы столбца максимальным элементом в массиве
@@ -56,7 +56,7 @@ void replaceMax(int ***arr, int m, int max);
 * @param ***arr массив, n и m размер массива, maxIndexes - массив bool, где на каждом индексе j стоит или не стоит флаг, есть ли в столбце максимальный элемент
 * @return изменённый массив
 */
-int insertZeroColumns(int ***arr, int n, int m, bool *maxIndexes);
+int insertZeroColumns(int ***arr, int n, int m, int *maxIndexes);
 
 /**
 * @brief выделяет память для массива
@@ -171,8 +171,8 @@ int findMax(int ***arr, int n, int m) {
 	return max;
 }
 
-bool *findMaxColumns(int ***arr, int n, int m, int max) {
-	bool *maxIndexes = calloc(m, sizeof(bool));
+int *findMaxColumns(int ***arr, int n, int m, int max) {
+	int *maxIndexes = calloc(m, sizeof(int));
 	memset(maxIndexes, 0, m);
 	int i = 0, j = 0;
 	for (i = 0; i < n; ++i) {
@@ -194,7 +194,7 @@ void replaceMax(int ***arr, int m, int max) {
 	}
 }
 
-int insertZeroColumns(int ***arr, int n, int m, bool *maxIndexes) {
+int insertZeroColumns(int ***arr, int n, int m, int *maxIndexes) {
 	int insertedColumns = 0;
 	int i = 0, j = 0;
 	for (i = 0; i < n; ++i) {
