@@ -38,7 +38,7 @@ int main() {
 	for (k = 1; k <= n; ++k) {
 		sum += sequency(k);
 	}
-	double limit = lim(n, sequency);
+	double limit = lim(e, sequency);
 	puts("Answers:\n");
 	printf("a) %lf\n b) %lf\n", sum, limit);
 	return 0;
@@ -48,7 +48,7 @@ double sequency(int n) {
 	int k = 0;
 	double sum = 0;
 	for (k = 0; k <= n; ++k) {
-		 sum += (pow(-1, k) / factorial(k)) * k;
+		 sum += ((double)pow(-1, k) / (double)factorial(k)) * (double)k;
 	}
 	return sum;
 }
@@ -63,10 +63,10 @@ double factorial(int x) {
 }
 
 double lim(int n, double (*func)(int)) {
-	double a = func(n);
-	double b = func(n + 1);
+	double a = (double)func(n);
+	double b = (double)func(n + 1);
 	double arg = n + 2;
-	while (abs(a - b) >= 0.00000001) {
+	while (fabs(a - b) >= 0.000001) {
 		a = b;
 		b = func(arg);
 		++arg;
