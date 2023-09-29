@@ -23,17 +23,12 @@ double sequency(int n);
 */
 double lim(int n, double (*func)(int));
 
+int getInt(char const *message);
+
 int main() {
-	int n = 0;
-	int e = 0;
-	puts("Enter n and e values: ");
-	scanf("%d %d", &n, &e);
-	puts("\n");
-	if (n <= 0 || e <= 0) {
-		puts("Invalid input!\n");
-		abort();
-	}
-	int k = 0;
+	int n = getInt("Enter n value:");
+	int e = getInt("Enter e value:");
+	size_t k = 0;
 	double sum = 0;
 	for (k = 1; k <= n; ++k) {
 		sum += sequency(k);
@@ -43,6 +38,18 @@ int main() {
 	printf("a) %lf\n b) %lf\n", sum, limit);
 	return 0;
 }
+
+int getInt(char const *message) {
+	printf("%s\n", message);
+	int value = 0;
+	scanf("%d", &value);
+	if (value <= 0) {
+		puts("Invalid input!\n");
+		abort();
+	}
+	return value;
+}
+	
  
 double sequency(int n) {
 	int k = 0;
