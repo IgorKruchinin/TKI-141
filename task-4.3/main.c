@@ -157,7 +157,7 @@ int *insert(int *arr, size_t size, int index, int elem) {
 }
 
 void printArr(int **arr, size_t n, size_t m) {
-	puts("Entered array:\n");
+	puts("Array:\n");
 	size_t i = 0;
 	size_t j = 0;
 	for (i = 0; i < n; ++i) {
