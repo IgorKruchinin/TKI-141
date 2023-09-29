@@ -23,6 +23,11 @@ double sequency(int n);
 */
 double lim(int n, double (*func)(int));
 
+/*
+* @brief Печатает сообщение message и получает целое число из stdin
+* @params message - сообщение для вывода
+* @return считанное число
+*/
 int getInt(char const *message);
 
 int main() {
