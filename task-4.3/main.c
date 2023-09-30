@@ -14,6 +14,12 @@ enum Choice {manually, randomly};
 void printArr(int **arr, size_t n, size_t m);
 
 /**
+* @brief Освобождает массив по указателю
+* @param **arr исходный массив, n - количество строк
+*/
+void deleteArr(int **arr, size_t n);
+
+/**
 * @brief считывает строку и проверяет, что в ней только числа
 * @param *arr строка матрицы (одномерный массив), size размер массива, index - индекс, после которого нужно вставить, elem - элемент, который нужно вставить
 * @return изменённый массив
@@ -100,6 +106,7 @@ int main() {
 	// Заменяем нулевой элемент иаксимальным по модулю элементом массива
 	puts("Output array:\n");
 	printArr(arr, n, m + insertedColumns);
+	deleteArr(arr, n);
 	return 0;
 }
 
@@ -264,4 +271,12 @@ enum Choice getChoice() {
     }
 
     return (enum Choice)temp;
+}
+
+void deleteArr(int **arr, size_t n) {
+	int i = 0;
+	for (i = 0; i < n; ++i) {
+		free(arr[i]);
+	}
+	free(arr);
 }
