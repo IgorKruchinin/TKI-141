@@ -260,7 +260,7 @@ int **initArray(size_t n, size_t m) {
 }
 
 enum Choice getChoice() {
-    printf("\nDo you want to enter the array or fill it random digits? (%d - for enter, %d - for random): ", manually, randomly);
+    printf("\nDo you want to enter the array or fill it random digits? (%d - for enter, %d - for random): ", (int)manually, (int)randomly);
     int temp;
     int result = scanf("%d", &temp);
     if (result != 1)
