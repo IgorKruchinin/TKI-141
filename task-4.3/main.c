@@ -1,23 +1,30 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "time.h"
-#include "limits.h"
 #include "stdbool.h"
 #include "string.h"
 #include "math.h"
+
+enum Choice {manually, randomly};
 
 /**
 * @brief печатает массив на экран
 * @param **arr исходный массив, n и m - количество строк и столбцов соответственно
 */
-void printArr(int **arr, int n, int m);
+void printArr(int **arr, size_t n, size_t m);
+
+/**
+* @brief Освобождает массив по указателю
+* @param **arr исходный массив, n - количество строк
+*/
+void deleteArr(int **arr, size_t n);
 
 /**
 * @brief считывает строку и проверяет, что в ней только числа
 * @param *arr строка матрицы (одномерный массив), size размер массива, index - индекс, после которого нужно вставить, elem - элемент, который нужно вставить
 * @return изменённый массив
 */
-int *insert(int *arr, int size, int index, int elem);
+int *insert(int *arr, size_t size, int index, int elem);
 
 /**
 * @brief заполняет массив целыми числами
@@ -43,7 +50,7 @@ int findMax(int ***arr, int n, int m);
 * @param ***arr массив, n и m размер массива, max - максимальный элемент массива
 * @return массив bool, где на каждом индексе j стоит или не стоит флаг, есть ли в столбце максимальный элемент
 */
-bool *findMaxColumns(int ***arr, int n, int m, int max);
+int *findMaxColumns(int ***arr, int n, int m, int max);
 
 /**
 * @brief заменяет 0-е элементы столбца максимальным элементом в массиве
@@ -56,7 +63,7 @@ void replaceMax(int ***arr, int m, int max);
 * @param ***arr массив, n и m размер массива, maxIndexes - массив bool, где на каждом индексе j стоит или не стоит флаг, есть ли в столбце максимальный элемент
 * @return изменённый массив
 */
-int insertZeroColumns(int ***arr, int n, int m, bool *maxIndexes);
+int insertZeroColumns(int ***arr, int n, int m, int *maxIndexes);
 
 /**
 * @brief выделяет память для массива
@@ -65,35 +72,33 @@ int insertZeroColumns(int ***arr, int n, int m, bool *maxIndexes);
 */
 int **initArray(size_t n, size_t m);
 
-int main() {
-	int i = 0;
-	int j = 0;
-	int n = 0, m = 0, filling = 0;
-	puts("Enter shape of array (n and m): ");
-	if (scanf("%d %d", &n, &m) != 2) {
-		puts("Invalid number of arguments!");
-		abort();
-	}
-	if (m <= 0 || n <= 0) {
-		puts("Invalid shape of array");
-		abort();
-	}
-	int **arr = initArray(n, m);
-	puts("\nDo you want to enter the array or fill it random digits? (0 - for enter, 1 - for random): ");
-	if (scanf("%d", &filling) != 1) {
-		puts("Invalid number of arguments!");
-		abort();
-	}
-	if (filling) {
-		randomInput(&arr, n, m);
-	} else {
-		userInput(&arr, n, m);
-	}
-	int max = findMax(&arr, n, m);
-	bool *maxIndexes = findMaxColumns(&arr, n, m, max);
-	puts("Entered array:\n");
-	printArr(arr, n, m);
+/**
+* @brief считывает целое число из stdin
+* @param message сообщение, выводимое пользователю перед вводом
+* @return введённое число
+*/
+size_t getSize(char const *message);
 
+/**
+* @brief считывает массив целых чисел из stdin или заполняет его случайными числами (выбор предоставляется пользователю при вводе)
+* @param n, m Количество строк и столбцов в массиве соответственно
+* @return полученный массив
+*/
+int **getIntArr(size_t n, size_t m);
+
+/**
+* @brief предлагают пользователю выбор, заполнять массив случайными числами или числами из пользовательского ввода (stdin)
+* @return выбор пользователя
+*/
+enum Choice getChoice();
+
+int main() {
+	size_t n = getSize("Enter count of rows in array");
+	size_t m = getSize("Enter count of columns in array");
+	int **arr = getIntArr(n, m);
+	int max = findMax(&arr, n, m);
+	int *maxIndexes = findMaxColumns(&arr, n, m, max);
+	printArr(arr, n, m);
 	// Заменяем нулевой элемент максимальным по модулю элементом массива
 	replaceMax(&arr, m, max);
 	int insertedColumns = insertZeroColumns(&arr, n, m, maxIndexes);
@@ -101,13 +106,48 @@ int main() {
 	// Заменяем нулевой элемент иаксимальным по модулю элементом массива
 	puts("Output array:\n");
 	printArr(arr, n, m + insertedColumns);
+	deleteArr(arr, n);
 	return 0;
 }
 
-int *insert(int *arr, int size, int index, int elem) {
-	int *tmp = (int*)calloc(size + 1, sizeof(int));
+size_t getSize(char const *message) {
+	printf("%s\n", message);
+	int value = 0;
+	int condition = scanf("%d", &value);
+	if (condition != 1) {
+		puts("Invalid input!");
+		abort();
+	}
+	if (value < 0) {
+		puts("Invalid size!\n");
+		abort();
+	}
+	return (size_t)value;
+}
+
+int **getIntArr(size_t n, size_t m) {
+	if (m <= 0 || n <= 0) {
+		puts("Invalid shape of array");
+		abort();
+	}
+	enum Choice filling = getChoice();
+	int **arr = initArray(n, m);
+	if (filling == randomly) {
+		randomInput(&arr, n, m);
+	} else if (filling == manually) {
+		userInput(&arr, n, m);
+	} else {
+		puts("Invalid choice!");
+		abort();
+	}
+	return arr;
+}
+
+
+int *insert(int *arr, size_t size, int index, int elem) {
+	int *tmp = (int*)calloc(size + 1, sizeof(size_t));
 	memset(tmp, 0, size + 1);
-	int i = 0;
+	size_t i = 0;
 	int insertedColumns = 0;
 	for (i = 0; i < size; ++i) {
 		if (i == index) {
@@ -121,9 +161,10 @@ int *insert(int *arr, int size, int index, int elem) {
 	return tmp;
 }
 
-void printArr(int **arr, int n, int m) {
-	int i = 0;
-	int j = 0;
+void printArr(int **arr, size_t n, size_t m) {
+	puts("Array:\n");
+	size_t i = 0;
+	size_t j = 0;
 	for (i = 0; i < n; ++i) {
 		for (j = 0; j < m; ++j) {
 			printf("%d\t", arr[i][j]);
@@ -135,7 +176,7 @@ void printArr(int **arr, int n, int m) {
 
 void randomInput(int ***arr, int n, int m) {
 	srand(time(NULL));
-	int i = 0, j = 0;
+	size_t i = 0, j = 0;
 	for (i = 0; i < n; ++i) {
 		for (j = 0; j < m; ++j) {
 			(*arr)[i][j] = rand() % 1000;
@@ -171,8 +212,8 @@ int findMax(int ***arr, int n, int m) {
 	return max;
 }
 
-bool *findMaxColumns(int ***arr, int n, int m, int max) {
-	bool *maxIndexes = calloc(m, sizeof(bool));
+int *findMaxColumns(int ***arr, int n, int m, int max) {
+	int *maxIndexes = calloc(m, sizeof(int));
 	memset(maxIndexes, 0, m);
 	int i = 0, j = 0;
 	for (i = 0; i < n; ++i) {
@@ -194,7 +235,7 @@ void replaceMax(int ***arr, int m, int max) {
 	}
 }
 
-int insertZeroColumns(int ***arr, int n, int m, bool *maxIndexes) {
+int insertZeroColumns(int ***arr, int n, int m, int *maxIndexes) {
 	int insertedColumns = 0;
 	int i = 0, j = 0;
 	for (i = 0; i < n; ++i) {
@@ -211,9 +252,30 @@ int insertZeroColumns(int ***arr, int n, int m, bool *maxIndexes) {
 
 int **initArray(size_t n, size_t m) {
 	int **arr = (int**)calloc(n, sizeof(int*));
-	int i = 0;
+	size_t i = 0;
 	for (i = 0; i < n; ++i) {
 		arr[i] = (int*)calloc(m, sizeof(int));
 	}
 	return arr;
+}
+
+enum Choice getChoice() {
+    printf("\nDo you want to enter the array or fill it random digits? (%d - for enter, %d - for random): ", (int)manually, (int)randomly);
+    int temp;
+    int result = scanf("%d", &temp);
+    if (result != 1)
+    {
+        puts("Error!");
+        abort();
+    }
+
+    return (enum Choice)temp;
+}
+
+void deleteArr(int **arr, size_t n) {
+	int i = 0;
+	for (i = 0; i < n; ++i) {
+		free(arr[i]);
+	}
+	free(arr);
 }
