@@ -130,17 +130,15 @@ int **getIntArr(size_t n, size_t m) {
 		puts("Invalid shape of array");
 		abort();
 	}
-	int filling = 0;
+	enum Choice filling = getChoice();
 	int **arr = initArray(n, m);
-	puts("\nDo you want to enter the array or fill it random digits? (0 - for enter, 1 - for random): ");
-	if (scanf("%d", &filling) != 1) {
-		puts("Invalid number of arguments!");
-		abort();
-	}
-	if (filling) {
+	if (filling == randomly) {
 		randomInput(&arr, n, m);
-	} else {
+	} else if (filling == manually) {
 		userInput(&arr, n, m);
+	} else {
+		puts("Invalid choice!");
+		abort();
 	}
 	return arr;
 }
@@ -262,6 +260,7 @@ int **initArray(size_t n, size_t m) {
 }
 
 enum Choice getChoice() {
+    printf("\nDo you want to enter the array or fill it random digits? (%d - for enter, %d - for random): ", manually, randomly);
     int temp;
     int result = scanf("%d", &temp);
     if (result != 1)
