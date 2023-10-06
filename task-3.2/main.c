@@ -2,12 +2,12 @@
 #include "math.h"
 #include "stdlib.h"
 
-/*
-* @brief Вычисляет факториал от x
-* @params x - число, для которого нужно вычислить факториал
-* @return факториал x
-*/
-double factorial(int x);
+///*
+//* @brief Вычисляет факториал от k
+//* @params k - число, на которое нужно домножить, prevFactorial - факториал k-1
+//* @return факториал k
+//*/
+//double factorial(double prevFactorial, int k);
 
 /*
 * @brief Вычисляет по указанной в задании формуле
@@ -55,24 +55,31 @@ int getInt(char const *message) {
 	return value;
 }
 	
- 
+// Для ускорения вычисления факториала каждый новый факториал вычисляется как предыдущий факториал умножить на текущее k. Гораздо проще и логичнее сделать вычисление факториала и последовательности в одной функции, так код более понятен
 double sequency(int n) {
 	int k = 0;
 	double sum = 0;
+	double factor = 1;
 	for (k = 0; k <= n; ++k) {
-		 sum += ((double)pow(-1, k) / (double)factorial(k)) * (double)k;
+		 factor = (k == 0 ? 1 : factor * k);
+		 //factor = factorial(factor, k);
+		 sum += ((double)pow(-1, k) / factor) * (double)k;
 	}
 	return sum;
 }
 
-double factorial(int x) {
+/*double factorial(int x) {
 	int res = 1;
 	int k = 0;
 	for (k = 1; k <= x; ++k) {
 		res *= k;
 	}
 	return res;
-}
+}*/
+
+/*double factorial(double prevFactorial, int k) {
+	return prevFactorial * k;
+}*/
 
 double lim(int n, double (*func)(int)) {
 	double a = (double)func(n);
