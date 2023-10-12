@@ -1,13 +1,5 @@
 #include "stdio.h"
-#include "math.h"
 #include "stdlib.h"
-
-///*
-//* @brief Вычисляет факториал от k
-//* @params k - число, на которое нужно домножить, prevFactorial - факториал k-1
-//* @return факториал k
-//*/
-//double factorial(double prevFactorial, int k);
 
 /*
 * @brief Вычисляет по указанной в задании формуле
@@ -66,19 +58,6 @@ double sequency(int n) {
                  prev = curr;
         }
         return sum;
-}
-
-/*double factorial(int x) {
-	int res = 1;
-	int k = 0;
-	for (k = 1; k <= x; ++k) {
-		res *= k;
-	}
-	return res;
-}*/
-
-double factorial(double prevFactorial, int k) {
-	return prevFactorial * k;
 }
 
 double lim(int n, double (*func)(int)) {
