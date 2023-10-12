@@ -1,5 +1,7 @@
 #include "stdio.h"
 #include "stdlib.h"
+#include "float.h"
+#include "math.h"
 
 /*
 * @brief Вычисляет по указанной в задании формуле
@@ -64,7 +66,7 @@ double lim(int n, double (*func)(int)) {
 	double a = (double)func(n);
 	double b = (double)func(n + 1);
 	double arg = n + 2;
-	while (fabs(a - b) >= 0.000001) {
+	while (fabs(a - b) >= DBL_MIN) {
 		a = b;
 		b = func(arg);
 		++arg;
