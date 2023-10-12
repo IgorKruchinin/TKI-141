@@ -55,17 +55,17 @@ int getInt(char const *message) {
 	return value;
 }
 	
-// Для ускорения вычисления факториала каждый новый факториал вычисляется как предыдущий факториал умножить на текущее k. Гораздо проще и логичнее сделать вычисление факториала и последовательности в одной функции, так код более понятен
 double sequency(int n) {
-	int k = 0;
-	double sum = 0;
-	double factor = 1;
-	for (k = 0; k <= n; ++k) {
-		 factor = (k == 0 ? 1 : factor * k);
-		 //factor = factorial(factor, k);
-		 sum += ((double)pow(-1, k) / factor) * (double)k;
-	}
-	return sum;
+        int k = 0;
+        double sum = 0;
+        double prev = 1;
+        double curr = -1;
+        for (k = 2; k <= n; ++k) {
+                 curr = prev * (-1/((double)k));
+                 sum += curr;
+                 prev = curr;
+        }
+        return sum;
 }
 
 /*double factorial(int x) {
@@ -77,9 +77,9 @@ double sequency(int n) {
 	return res;
 }*/
 
-/*double factorial(double prevFactorial, int k) {
+double factorial(double prevFactorial, int k) {
 	return prevFactorial * k;
-}*/
+}
 
 double lim(int n, double (*func)(int)) {
 	double a = (double)func(n);
