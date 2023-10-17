@@ -1,13 +1,7 @@
 #include "stdio.h"
-#include "math.h"
 #include "stdlib.h"
-
-/*
-* @brief Вычисляет факториал от x
-* @params x - число, для которого нужно вычислить факториал
-* @return факториал x
-*/
-double factorial(int x);
+#include "float.h"
+#include "math.h"
 
 /*
 * @brief Вычисляет по указанной в задании формуле
@@ -55,30 +49,24 @@ int getInt(char const *message) {
 	return value;
 }
 	
- 
 double sequency(int n) {
-	int k = 0;
-	double sum = 0;
-	for (k = 0; k <= n; ++k) {
-		 sum += ((double)pow(-1, k) / (double)factorial(k)) * (double)k;
-	}
-	return sum;
-}
-
-double factorial(int x) {
-	int res = 1;
-	int k = 0;
-	for (k = 1; k <= x; ++k) {
-		res *= k;
-	}
-	return res;
+        int k = 0;
+        double sum = 0;
+        double prev = 1;
+        double curr = -1;
+        for (k = 2; k <= n; ++k) {
+                 curr = prev * (-1/((double)k));
+                 sum += curr;
+                 prev = curr;
+        }
+        return sum;
 }
 
 double lim(int n, double (*func)(int)) {
 	double a = (double)func(n);
 	double b = (double)func(n + 1);
 	double arg = n + 2;
-	while (fabs(a - b) >= 0.000001) {
+	while (fabs(a - b) >= DBL_MIN) {
 		a = b;
 		b = func(arg);
 		++arg;
