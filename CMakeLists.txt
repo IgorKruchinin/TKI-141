@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.28)
+project(Lists)
+include_directories(library)
+include_directories(exec)
+include_directories(tests)
+add_subdirectory(library)
+add_subdirectory(exec)
+add_subdirectory(tests)
