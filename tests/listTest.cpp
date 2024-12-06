@@ -15,6 +15,10 @@ TEST(ListTest, InitializerListConstructorTest) {
     EXPECT_EQ(l[0], 1);
     EXPECT_EQ(l[1], 2);
     EXPECT_EQ(l[2], 3);
+    List<std::string> lstr = {"Я люблю Рому!", "Как же надоели лабы у Зольниковой с огромной очередью"};
+    EXPECT_EQ(lstr.getSize(), 2);
+    EXPECT_EQ(lstr[0], "Я люблю Рому!");
+    EXPECT_EQ(lstr[1], "Как же надоели лабы у Зольниковой с огромной очередью");
 }
 // Тест метода append(int elem):
 //cpp
@@ -23,6 +27,12 @@ TEST(ListTest, AppendTest) {
     l.append(42);
     EXPECT_EQ(l.getSize(), 1);
     EXPECT_EQ(l[0], 42);
+    List<std::string> lstr = {"Я люблю Рому!", "Как же надоели лабы у Зольниковой с огромной очередью"};
+    EXPECT_EQ(lstr.getSize(), 2);
+    lstr.append("Hello");
+    EXPECT_EQ(lstr.getSize(), 3);
+
+
 }
 // Тест метода remove(size_t index):
 //cpp
@@ -32,6 +42,12 @@ TEST(ListTest, RemoveTest) {
     EXPECT_EQ(l.getSize(), 2);
     EXPECT_EQ(l[0], 1);
     EXPECT_EQ(l[1], 3);
+    List<std::string> lstr = {"Я люблю Рому!", "Как же надоели лабы у Зольниковой с огромной очередью"};
+    EXPECT_EQ(lstr.getSize(), 2);
+    EXPECT_EQ(lstr[0], "Я люблю Рому!");
+    EXPECT_EQ(lstr[1], "Как же надоели лабы у Зольниковой с огромной очередью");
+    lstr.remove(1);
+    EXPECT_EQ(lstr.getSize(), 1);
 }
 // Тест оператора присваивания и конструктора копирования:
 //cpp
@@ -48,4 +64,12 @@ TEST(ListTest, CopyConstructorAndAssignmentOperatorTest) {
     EXPECT_EQ(l3[0], l1[0]);
     EXPECT_EQ(l3[1], l1[1]);
     EXPECT_EQ(l3[2], l1[2]);
+    List<std::string> lstr = {"Я люблю Рому!", "Как же надоели лабы у Зольниковой с огромной очередью"};
+    EXPECT_EQ(lstr.getSize(), 2);
+    EXPECT_EQ(lstr[0], "Я люблю Рому!");
+    EXPECT_EQ(lstr[1], "Как же надоели лабы у Зольниковой с огромной очередью");
+    List<std::string> lstr2 = lstr;
+    EXPECT_EQ(lstr2.getSize(), 2);
+    EXPECT_EQ(lstr2[0], "Я люблю Рому!");
+    EXPECT_EQ(lstr2[1], "Как же надоели лабы у Зольниковой с огромной очередью");
 }
